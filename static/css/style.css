@@ -1,0 +1,25 @@
+:root {
+  --hb-amber: #c17f2b;
+  --hb-dark: #2b1d12;
+}
+body { background-color: #faf6f0; }
+.navbar-brand { color: #f2b544 !important; }
+.product-card { transition: transform .15s ease; border: none; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.product-card:hover { transform: translateY(-3px); }
+.price-tag { color: var(--hb-amber); font-weight: 700; }
+.rating-stars { color: #f2b544; }
+
+/* Generic input styling for forms without explicit Bootstrap classes (e.g. AuthenticationForm) */
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form input[type="number"],
+form textarea,
+form select {
+  display: block;
+  width: 100%;
+  padding: .375rem .75rem;
+  margin-bottom: .5rem;
+  border: 1px solid #ced4da;
+  border-radius: .375rem;
+}

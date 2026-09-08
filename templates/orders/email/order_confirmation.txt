@@ -1,0 +1,16 @@
+Вітаємо, {{ order.full_name }}!
+
+Дякуємо за замовлення №{{ order.pk }} у Hop & Barley.
+
+Склад замовлення:
+{% for item in items %}- {{ item.product.name }} × {{ item.quantity }} = {{ item.subtotal }} ₴
+{% endfor %}
+Разом: {{ order.total_price }} ₴
+
+Адреса доставки: {{ order.shipping_address }}
+Спосіб оплати: {{ order.get_payment_method_display }}
+
+Ми повідомимо вас, коли статус замовлення зміниться.
+
+З повагою,
+Команда Hop & Barley

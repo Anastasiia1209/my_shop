@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Мої замовлення — Hop & Barley{% endblock %}
+{% block content %}
+<h3 class="mb-4">Мої замовлення</h3>
+
+<form method="get" class="mb-4 d-flex gap-2 align-items-center">
+    <label class="small text-muted mb-0">Фільтр за статусом:</label>
+    <select name="status" class="form-select form-select-sm" style="width:auto;" onchange="this.form.submit()">
+        <option value="">Усі</option>
+        {% for value, label in statuses %}
+            <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+{% if orders %}
+<div class="table-responsive">
+<table class="table align-middle">
+    <thead>
+        <tr><th>№</th><th>Дата</th><th>Статус</th><th>Сума</th><th></th></tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.created_at|date:"d.m.Y H:i" }}</td>
+            <td><span class="badge bg-secondary">{{ order.get_status_display }}</span></td>
+            <td class="price-tag">{{ order.total_price }} ₴</td>
+            <td><a href="{% url 'orders:order_detail' order.id %}" class="btn btn-sm btn-outline-dark">Деталі</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% else %}
+    <p class="text-muted">У вас ще немає замовлень.</p>
+{% endif %}
+{% endblock %}

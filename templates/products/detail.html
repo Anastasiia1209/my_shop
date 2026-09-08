@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} — Hop & Barley{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-5">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ product.name }}">
+        {% else %}
+            <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height:320px;font-size:4rem;">🍺</div>
+        {% endif %}
+    </div>
+    <div class="col-md-7">
+        <p class="text-muted mb-1"><a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></p>
+        <h2>{{ product.name }}</h2>
+        {% if product.avg_rating %}
+            <p class="rating-stars">★ {{ product.avg_rating|floatformat:1 }}/5 ({{ product.review_count }} відгуків)</p>
+        {% endif %}
+        <p class="fs-3 price-tag">{{ product.price }} ₴</p>
+        <p>{{ product.description|linebreaks }}</p>
+
+        {% if product.in_stock %}
+            <p class="text-success">✔ В наявності: {{ product.stock }} шт.</p>
+            <form method="post" action="{% url 'orders:cart_add' product.id %}" class="d-flex gap-2 align-items-center">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control" style="width:100px;">
+                <button type="submit" class="btn btn-warning">Додати в кошик</button>
+            </form>
+        {% else %}
+            <p class="text-danger">Немає в наявності</p>
+        {% endif %}
+    </div>
+</div>
+
+<hr class="my-5">
+
+<div class="row">
+    <div class="col-lg-8">
+        <h4 class="mb-3">Відгуки ({{ reviews|length }})</h4>
+        {% for review in reviews %}
+            <div class="border-bottom pb-3 mb-3">
+                <strong>{{ review.user.username }}</strong>
+                <span class="rating-stars">{{ review.rating }}/5 ★</span>
+                <p class="mb-0 text-muted small">{{ review.created_at|date:"d.m.Y" }}</p>
+                <p class="mb-0">{{ review.comment }}</p>
+            </div>
+        {% empty %}
+            <p class="text-muted">Відгуків поки немає.</p>
+        {% endfor %}
+
+        {% if can_review %}
+            <form method="post" action="{% url 'products:add_review' product.slug %}" class="mt-4">
+                {% csrf_token %}
+                <h6>Залишити відгук</h6>
+                {{ review_form.as_p }}
+                <button type="submit" class="btn btn-dark btn-sm">Надіслати відгук</button>
+            </form>
+        {% elif already_reviewed %}
+            <p class="text-muted">Ви вже залишили відгук на цей товар.</p>
+        {% elif user.is_authenticated %}
+            <p class="text-muted">Залишити відгук можна лише після покупки цього товару.</p>
+        {% else %}
+            <p class="text-muted"><a href="{% url 'users:login' %}?next={{ request.path }}">Увійдіть</a>, щоб залишити відгук (доступно після покупки).</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
